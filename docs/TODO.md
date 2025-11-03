@@ -290,59 +290,81 @@
         - [x] 빈 장바구니 처리 (장바구니 페이지로 리다이렉트)
         - [x] 주문 상품 목록 표시
         - [x] 주문 요약 컴포넌트 통합
-    - [ ] Phase 2: 주문 정보 입력 폼 (필수)
-      - [ ] 배송지 정보 입력 폼
-        - [ ] 이름 (받는 사람)
-        - [ ] 전화번호
-        - [ ] 우편번호
-        - [ ] 주소 (기본주소, 상세주소)
-        - [ ] `shipping_address` JSONB 구조 정의
-      - [ ] 주문 메모 입력 (`order_note`)
-      - [ ] 폼 유효성 검사 (react-hook-form + Zod)
-        - [ ] Zod 스키마 정의
-        - [ ] 필수 필드 검증
-        - [ ] 전화번호 형식 검증
-        - [ ] 우편번호 형식 검증
-      - [ ] 주문 요약 컴포넌트
-        - [ ] 상품 목록 표시
-        - [ ] 총액 표시
-        - [ ] 장바구니 데이터 기반 계산
-    - [ ] Phase 3: 주문 생성 Server Action (필수)
-      - [ ] 주문 생성 Server Action (`actions/orders.ts`)
-        - [ ] `createOrder()` 함수 구현
-        - [ ] Clerk 사용자 인증 확인
-        - [ ] 장바구니 아이템 조회
-        - [ ] 장바구니 비어있는지 확인
-        - [ ] 트랜잭션 처리
-          - [ ] `orders` 테이블 INSERT
-          - [ ] `order_items` 테이블 INSERT (여러 개)
-          - [ ] 장바구니 비우기 (`cart_items` DELETE)
-        - [ ] 에러 처리 및 로깅
-      - [ ] 주문 생성 폼 제출 핸들러
-        - [ ] 폼 데이터 검증
-        - [ ] Server Action 호출
-        - [ ] 성공 시 주문 완료 페이지로 리다이렉트
-        - [ ] 에러 처리 및 피드백
-    - [ ] Phase 4: 주문 완료 페이지 (필수)
-      - [ ] 주문 완료 페이지 (`/orders/[id]`)
-        - [ ] 동적 라우트 생성 (`app/orders/[id]/page.tsx`)
-        - [ ] 주문 조회 Server Action (`getOrderById()`)
-          - [ ] `orders` 테이블 조회
-          - [ ] `order_items` 테이블 조회 (JOIN)
-          - [ ] 본인 주문만 조회 가능하도록 권한 확인
-          - [ ] 에러 처리 및 로깅
-        - [ ] 주문 정보 표시
-          - [ ] 주문 번호 (ID 또는 UUID 일부)
-          - [ ] 주문 날짜
-          - [ ] 주문 상태
-          - [ ] 배송지 정보
-          - [ ] 주문 메모
-          - [ ] 주문 상품 목록
-          - [ ] 총액 표시
-        - [ ] 404 처리 (존재하지 않는 주문)
-- [ ] 주문 테이블 연동
-  - [ ] 주문 상태 관리
-  - [ ] 주문 조회 기능
+    - [x] Phase 2: 주문 정보 입력 폼 (필수)
+      - [x] 배송지 정보 입력 폼
+        - [x] 이름 (받는 사람)
+        - [x] 전화번호
+        - [x] 우편번호
+        - [x] 주소 (기본주소, 상세주소)
+        - [x] `shipping_address` JSONB 구조 정의
+      - [x] 주문 메모 입력 (`order_note`)
+      - [x] 폼 유효성 검사 (react-hook-form + Zod)
+        - [x] Zod 스키마 정의 (`lib/schemas/checkout.ts`)
+        - [x] 필수 필드 검증
+        - [x] 전화번호 형식 검증
+        - [x] 우편번호 형식 검증
+      - [x] 주문 요약 컴포넌트
+        - [x] 상품 목록 표시
+        - [x] 총액 표시
+        - [x] 장바구니 데이터 기반 계산
+    - [x] Phase 3: 주문 생성 Server Action (필수)
+      - [x] 주문 생성 Server Action (`actions/orders.ts`)
+        - [x] `createOrder()` 함수 구현
+        - [x] Clerk 사용자 인증 확인
+        - [x] 장바구니 아이템 조회
+        - [x] 장바구니 비어있는지 확인
+        - [x] 트랜잭션 처리
+          - [x] `orders` 테이블 INSERT
+          - [x] `order_items` 테이블 INSERT (여러 개)
+          - [x] 장바구니 비우기 (`cart_items` DELETE)
+        - [x] 에러 처리 및 로깅
+      - [x] 주문 생성 폼 제출 핸들러
+        - [x] 폼 데이터 검증
+        - [x] Server Action 호출
+        - [x] 성공 시 주문 완료 페이지로 리다이렉트
+        - [x] 에러 처리 및 피드백
+    - [x] Phase 4: 주문 완료 페이지 (필수)
+      - [x] 주문 완료 페이지 (`/orders/[id]`)
+        - [x] 동적 라우트 생성 (`app/orders/[id]/page.tsx`)
+        - [x] 주문 조회 Server Action (`getOrderById()`)
+          - [x] `orders` 테이블 조회
+          - [x] `order_items` 테이블 조회 (JOIN)
+          - [x] 본인 주문만 조회 가능하도록 권한 확인
+          - [x] 에러 처리 및 로깅
+        - [x] 주문 정보 표시
+          - [x] 주문 번호 (ID 또는 UUID 일부)
+          - [x] 주문 날짜
+          - [x] 주문 상태
+          - [x] 배송지 정보
+          - [x] 주문 메모
+          - [x] 주문 상품 목록
+          - [x] 총액 표시
+        - [x] 404 처리 (존재하지 않는 주문)
+        - [x] 로딩 스켈레톤 (`app/orders/[id]/loading.tsx`)
+- [x] 주문 테이블 연동 
+  - [x] 주문 상태 관리
+    - [x] 주문 상태 변경 Server Action (`updateOrderStatus()`)
+      - [x] Clerk 사용자 인증 확인
+      - [x] 본인 주문만 변경 가능하도록 권한 확인
+      - [x] 상태 변경 제약 조건 확인 (canUpdateOrderStatus)
+        - [x] pending → confirmed, cancelled 가능
+        - [x] confirmed → shipped, cancelled 가능
+        - [x] shipped → delivered, cancelled 가능
+        - [x] delivered → 변경 불가
+        - [x] cancelled → 변경 불가
+      - [x] orders 테이블 status 필드 UPDATE
+      - [x] 에러 처리 및 로깅
+    - [x] 주문 상태 유틸리티 함수 (`lib/utils/orders.ts`)
+      - [x] `canUpdateOrderStatus()` - 상태 변경 가능 여부 확인
+      - [x] `getOrderStatusLabel()` - 상태 한글 레이블 변환
+      - [x] `getOrderStatusBadgeClass()` - 상태별 뱃지 색상 클래스
+  - [x] 주문 조회 기능
+    - [x] 주문 목록 조회 Server Action (`getOrders()`)
+      - [x] Clerk 사용자 인증 확인
+      - [x] `orders` 테이블에서 `clerk_id`로 필터링 (본인 주문만)
+      - [x] 최신 주문순 정렬 (`created_at` 내림차순)
+      - [x] 주문 상태별 필터링 (선택사항)
+      - [x] 에러 처리 및 로깅
 
 ## Phase 4: 결제 통합 (1주)
 

@@ -8,17 +8,18 @@
  * 1. Clerk 인증 확인 (미로그인 시 리다이렉트)
  * 2. 장바구니 아이템 조회 및 표시
  * 3. 빈 장바구니 처리 (장바구니 페이지로 리다이렉트)
- * 4. 주문 정보 입력 폼 (추후 구현)
+ * 4. 주문 정보 입력 폼 (배송지 정보 및 주문 메모)
  * 5. 주문 요약 표시
  *
  * 구현 로직:
  * - Server Component로 장바구니 데이터 조회
  * - 빈 장바구니 확인 및 처리
- * - 주문 정보 입력 폼 컴포넌트 (추후 구현)
+ * - 주문 정보 입력 폼 컴포넌트 통합
  *
  * @dependencies
  * - actions/cart: 장바구니 조회 Server Actions
  * - components/cart-summary: 주문 요약 컴포넌트 (재사용)
+ * - components/checkout-form: 주문 정보 입력 폼 컴포넌트 (Server Action 호출 포함)
  */
 
 import { redirect } from "next/navigation";
@@ -26,6 +27,7 @@ import { auth } from "@clerk/nextjs/server";
 import { getCartItems } from "@/actions/cart";
 import { CartSummary } from "@/components/cart-summary";
 import { CartItemCard } from "@/components/cart-item-card";
+import { CheckoutForm } from "@/components/checkout-form";
 
 export default async function CheckoutPage() {
   try {
@@ -71,15 +73,10 @@ export default async function CheckoutPage() {
 
           {/* 주문 정보 입력 폼 및 주문 요약 */}
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-            {/* 주문 정보 입력 폼 (왼쪽, 추후 구현) */}
+            {/* 주문 정보 입력 폼 (왼쪽) */}
             <div className="lg:col-span-2">
               <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
-                  배송지 정보
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  배송지 입력 폼은 추후 구현 예정입니다.
-                </p>
+                <CheckoutForm />
               </div>
 
               {/* 주문 상품 목록 */}
