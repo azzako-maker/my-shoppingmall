@@ -29,7 +29,9 @@
   - [x] 상품 목록 표시 (최신 상품 또는 전체 상품 미리보기)
   - [x] 반응형 레이아웃
   - [x] 카테고리 카다로그 기능 (카테고리별 상품 조회 및 네비게이션)
-  - [ ] 인기 상품 섹션 (주문량 또는 조회수 기준 인기 상품 표시)
+  - [x] 인기 상품 섹션 (주문량 또는 조회수 기준 인기 상품 표시)
+    - [x] `getPopularProducts()` 함수 구현 (주문량 기준, 최대 6개)
+    - [x] 홈페이지에 인기 상품 섹션 추가 ("전체 상품" 섹션 위)
 - [x] 상품 타입 정의
   - [x] `types/product.ts` 생성 완료
 - [x] 상품 조회 Server Action
@@ -37,6 +39,7 @@
   - [x] `getLatestProducts()` 함수 (최신 상품 조회)
   - [x] `getAllProducts()` 함수 (전체 상품 조회)
   - [x] `getProductsByCategory()` 함수 (카테고리별 상품 조회)
+  - [x] `getPopularProducts()` 함수 (주문량 기준 인기 상품 조회)
 - [x] 상품 카드 컴포넌트
   - [x] `components/product-card.tsx` 구현 완료
   - [x] 상품 정보 표시 (이름, 가격, 카테고리)

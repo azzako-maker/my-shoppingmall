@@ -2,12 +2,13 @@
  * @file page.tsx
  * @description 홈페이지
  *
- * 쇼핑몰 홈페이지로, 최신 상품과 전체 상품 미리보기를 표시합니다.
+ * 쇼핑몰 홈페이지로, 최신 상품, 인기 상품, 전체 상품 미리보기를 표시합니다.
  *
  * 주요 기능:
  * 1. 최신 상품 섹션 (8개 제한)
- * 2. 전체 상품 미리보기 섹션 (12개 제한)
- * 3. 전체 상품 보기 링크
+ * 2. 인기 상품 섹션 (6개 제한, 주문량 기준)
+ * 3. 전체 상품 미리보기 섹션 (12개 제한)
+ * 4. 전체 상품 보기 링크
  *
  * 구현 로직:
  * - Server Component로 상품 데이터 조회
@@ -22,19 +23,25 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ProductCard } from "@/components/product-card";
-import { getLatestProducts, getAllProducts } from "@/actions/get-products";
+import {
+  getLatestProducts,
+  getPopularProducts,
+  getAllProducts,
+} from "@/actions/get-products";
 
 export default async function Home() {
   try {
     console.group("[Home] 홈페이지 상품 데이터 조회 시작");
 
-    // 최신 상품과 전체 상품을 병렬로 조회
-    const [latestProducts, allProducts] = await Promise.all([
+    // 최신 상품, 인기 상품, 전체 상품을 병렬로 조회
+    const [latestProducts, popularProducts, allProducts] = await Promise.all([
       getLatestProducts(8),
+      getPopularProducts(6),
       getAllProducts(12),
     ]);
 
     console.log("[Home] 최신 상품 개수:", latestProducts.length);
+    console.log("[Home] 인기 상품 개수:", popularProducts.length);
     console.log("[Home] 전체 상품 개수:", allProducts.length);
     console.groupEnd();
 
@@ -56,6 +63,26 @@ export default async function Home() {
               <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-800 dark:bg-gray-900">
                 <p className="text-gray-600 dark:text-gray-400">
                   등록된 상품이 없습니다.
+                </p>
+              </div>
+            )}
+          </section>
+
+          {/* 인기 상품 섹션 */}
+          <section>
+            <div className="mb-6 flex items-center justify-between">
+              <h2 className="text-2xl font-bold md:text-3xl">인기 상품 🔥</h2>
+            </div>
+            {popularProducts.length > 0 ? (
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+                {popularProducts.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+            ) : (
+              <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center dark:border-gray-800 dark:bg-gray-900">
+                <p className="text-gray-600 dark:text-gray-400">
+                  인기 상품이 없습니다.
                 </p>
               </div>
             )}
