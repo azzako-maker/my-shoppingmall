@@ -16,17 +16,15 @@
  *
  * @dependencies
  * - actions/cart: 장바구니 조회 Server Actions
- * - components/cart-item-list: 장바구니 아이템 목록 컴포넌트 (일괄 삭제 기능 포함)
+ * - components/cart-content: 장바구니 컨텐츠 컴포넌트 (실시간 업데이트 기능 포함)
  * - components/empty-cart: 빈 장바구니 UI 컴포넌트
- * - components/cart-summary: 장바구니 총액 요약 컴포넌트
  */
 
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { getCartItems } from "@/actions/cart";
-import { CartItemList } from "@/components/cart-item-list";
+import { CartContent } from "@/components/cart-content";
 import { EmptyCart } from "@/components/empty-cart";
-import { CartSummary } from "@/components/cart-summary";
 
 export default async function CartPage() {
   try {
@@ -64,17 +62,7 @@ export default async function CartPage() {
 
           {/* 장바구니 아이템 목록 및 총액 */}
           {cartItems.length > 0 ? (
-            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-              {/* 장바구니 아이템 목록 */}
-              <div className="lg:col-span-2">
-                <CartItemList items={cartItems} />
-              </div>
-
-              {/* 총액 요약 */}
-              <div className="lg:col-span-1">
-                <CartSummary items={cartItems} />
-              </div>
-            </div>
+            <CartContent items={cartItems} />
           ) : (
             <EmptyCart />
           )}

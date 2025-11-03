@@ -6,11 +6,12 @@
  * - 상품 이미지, 이름, 가격, 수량, 소계 표시
  * - 수량 조절 및 삭제 기능
  * - 재고 부족 경고 표시
+ * - 실시간 수량 업데이트 (Optimistic Update)
  */
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
@@ -33,9 +34,10 @@ import {
 
 interface CartItemCardProps {
   item: CartItemWithProduct;
-  onUpdate?: () => void; // 업데이트 후 콜백
+  onUpdate?: () => void; // 업데이트 후 콜백 (레거시)
   checked?: boolean; // 체크박스 선택 상태
   onCheckedChange?: (checked: boolean) => void; // 체크박스 상태 변경 핸들러
+  onQuantityChange?: (itemId: string, newQuantity: number) => void; // 수량 변경 콜백 (실시간 업데이트용)
 }
 
 export function CartItemCard({
@@ -43,6 +45,7 @@ export function CartItemCard({
   onUpdate,
   checked = false,
   onCheckedChange,
+  onQuantityChange,
 }: CartItemCardProps) {
   const router = useRouter();
   const { product, quantity, id } = item;
@@ -52,31 +55,50 @@ export function CartItemCard({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  // item.quantity가 변경되면 currentQuantity 동기화 (외부 변경 대응)
+  useEffect(() => {
+    setCurrentQuantity(quantity);
+  }, [quantity]);
+
   const subtotal = product.price * currentQuantity;
   const isLowStock = product.stock_quantity < 10;
   const isOutOfStock = product.stock_quantity === 0;
 
   /**
    * 수량 변경 핸들러
+   * Optimistic Update 패턴 적용:
+   * 1. 먼저 부모 콜백 호출하여 상태 즉시 업데이트
+   * 2. 그 다음 Server Action 호출하여 DB 업데이트
+   * 3. 실패 시 롤백
    */
   const handleQuantityChange = async (newQuantity: number) => {
     if (newQuantity === quantity) return; // 변경 없음
 
+    const previousQuantity = currentQuantity; // 롤백용 이전 수량 저장
+
     setIsUpdating(true);
     setErrorMessage(null);
 
+    // Optimistic Update: 먼저 UI 업데이트
+    setCurrentQuantity(newQuantity);
+    if (onQuantityChange) {
+      onQuantityChange(id, newQuantity);
+    }
+
+    // Server Action 호출하여 DB 업데이트
     const result = await updateCartItemQuantity(id, newQuantity);
 
     if (result.success) {
-      setCurrentQuantity(newQuantity);
-      if (onUpdate) {
-        onUpdate();
-      } else {
-        router.refresh();
-      }
+      // 성공 시 이미 업데이트됨, 추가 작업 없음
+      // 레거시 onUpdate 콜백은 호출하지 않음 (실시간 업데이트 사용)
     } else {
+      // 실패 시 롤백
       setErrorMessage(result.message);
-      setCurrentQuantity(quantity); // 원래 수량으로 복구
+      setCurrentQuantity(previousQuantity);
+      if (onQuantityChange) {
+        onQuantityChange(id, previousQuantity);
+      }
+      // 레거시: onUpdate나 router.refresh() 호출 안 함 (이미 롤백됨)
     }
 
     setIsUpdating(false);

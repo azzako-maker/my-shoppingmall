@@ -48,9 +48,13 @@ import { removeCartItems } from "@/actions/cart";
 
 interface CartItemListProps {
   items: CartItemWithProduct[];
+  onItemQuantityChange?: (itemId: string, newQuantity: number) => void;
 }
 
-export function CartItemList({ items }: CartItemListProps) {
+export function CartItemList({
+  items,
+  onItemQuantityChange,
+}: CartItemListProps) {
   const router = useRouter();
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -173,6 +177,7 @@ export function CartItemList({ items }: CartItemListProps) {
             onCheckedChange={(checked) =>
               handleItemCheckedChange(item.id, checked)
             }
+            onQuantityChange={onItemQuantityChange}
           />
         ))}
       </div>
