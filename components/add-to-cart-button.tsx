@@ -19,11 +19,14 @@ import { useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
 import { ProductQuantitySelector } from "@/components/product-quantity-selector";
+import { AddToCartDialog } from "@/components/add-to-cart-dialog";
 import { addToCart } from "@/actions/cart";
 import { ShoppingCart } from "lucide-react";
+import { Product } from "@/types/product";
 
 interface AddToCartButtonProps {
   productId: string;
+  product: Product; // Dialog에 표시하기 위한 상품 정보
   maxQuantity: number;
   disabled?: boolean;
 }
@@ -33,6 +36,7 @@ interface AddToCartButtonProps {
  */
 export function AddToCartButton({
   productId,
+  product,
   maxQuantity,
   disabled = false,
 }: AddToCartButtonProps) {
@@ -43,6 +47,7 @@ export function AddToCartButton({
   const [messageType, setMessageType] = useState<"success" | "error" | null>(
     null,
   );
+  const [showDialog, setShowDialog] = useState(false);
 
   /**
    * 장바구니 추가 핸들러
@@ -75,15 +80,9 @@ export function AddToCartButton({
       const result = await addToCart(productId, quantity);
 
       if (result.success) {
-        setMessage(result.message);
-        setMessageType("success");
         console.log("[AddToCartButton] 장바구니 추가 성공");
-
-        // 성공 메시지 3초 후 자동 제거
-        setTimeout(() => {
-          setMessage(null);
-          setMessageType(null);
-        }, 3000);
+        // Dialog 표시
+        setShowDialog(true);
       } else {
         setMessage(result.message);
         setMessageType("error");
@@ -160,6 +159,14 @@ export function AddToCartButton({
           로그인 후 장바구니에 추가할 수 있습니다.
         </p>
       )}
+
+      {/* 장바구니 추가 성공 Dialog */}
+      <AddToCartDialog
+        open={showDialog}
+        onOpenChange={setShowDialog}
+        product={product}
+        quantity={quantity}
+      />
     </div>
   );
 }

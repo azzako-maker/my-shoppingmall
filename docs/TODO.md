@@ -168,43 +168,178 @@
 
 ## Phase 3: 장바구니 & 주문 (1주)
 
-- [ ] 장바구니 기능
-  - [ ] 장바구니 페이지 (`/cart`)
-    - [ ] 페이지 라우트 생성
-    - [ ] 장바구니 아이템 조회 API/Server Action
-    - [ ] 장바구니 아이템 표시
-  - [ ] 장바구니 추가 기능
-    - [ ] `cart_items` 테이블 INSERT Server Action
-    - [ ] 중복 상품 처리 (수량 증가)
-    - [ ] 재고 확인 로직
-    - [ ] 성공/실패 피드백 UI
-  - [ ] 장바구니 수량 변경
-    - [ ] 수량 업데이트 Server Action
-    - [ ] 수량 변경 UI (증가/감소 버튼)
-    - [ ] 재고 한도 확인
-  - [ ] 장바구니 아이템 삭제
-    - [ ] 삭제 Server Action
-    - [ ] 삭제 확인 모달
-  - [ ] 장바구니 총액 계산
-    - [ ] 서버/클라이언트 총액 계산 로직
-    - [ ] 총액 표시 UI
+- [x] 장바구니 기능 (완료)
+  - [x] 장바구니 추가 기능 (이미 구현 완료)
+    - [x] `cart_items` 테이블 INSERT Server Action (`actions/cart.ts`)
+    - [x] 중복 상품 처리 (수량 증가)
+    - [x] 재고 확인 로직
+    - [x] 성공/실패 피드백 UI
+    - [x] 장바구니 추가 후 Dialog (Phase 3에서 구현 완료)
+  - [x] Phase 1: 핵심 기능 (필수)
+    - [x] 장바구니 타입 정의 (`types/cart.ts`)
+      - [x] `CartItem` 인터페이스 정의
+      - [x] `CartItemWithProduct` 타입 정의 (cart_items + products JOIN)
+    - [x] 장바구니 조회 Server Action (`actions/cart.ts`)
+      - [x] `getCartItems()` 함수 구현
+        - [x] Clerk 사용자 인증 확인
+        - [x] `cart_items` 테이블에서 `clerk_id`로 필터링
+        - [x] `products` 테이블과 JOIN하여 상품 정보 포함
+        - [x] 에러 핸들링 및 로깅
+      - [x] `getCartItemsCount()` 함수 구현 (장바구니 개수 조회)
+    - [x] 장바구니 페이지 (`/cart`)
+      - [x] 페이지 라우트 생성 (`app/cart/page.tsx`)
+      - [x] Server Component로 장바구니 아이템 조회
+      - [x] 장바구니 아이템 목록 표시
+      - [x] 빈 장바구니 상태 UI (`components/empty-cart.tsx`)
+        - [x] 빈 상태 아이콘 및 메시지
+        - [x] 쇼핑 계속하기 버튼
+    - [x] 장바구니 아이템 카드 컴포넌트 (`components/cart-item-card.tsx`)
+      - [x] 상품 이미지 (플레이스홀더)
+      - [x] 상품명 (클릭 시 상세 페이지로 이동)
+      - [x] 단가 표시
+      - [x] 수량 표시 및 조절 UI (증가/감소 버튼, 직접 입력)
+      - [x] 소계 계산 (단가 × 수량)
+      - [x] 삭제 버튼
+      - [x] 반응형 디자인
+      - [x] 재고 부족 경고 표시
+  - [x] Phase 2: 상호작용 기능 (필수)
+    - [x] 장바구니 수량 변경
+      - [x] 수량 업데이트 Server Action (`updateCartItemQuantity()`)
+        - [x] Clerk 사용자 인증 확인
+        - [x] 재고 수량 확인 (변경 후 수량이 재고보다 많으면 에러)
+        - [x] `cart_items` 테이블 UPDATE
+        - [x] 에러 처리 및 로깅
+      - [x] 수량 변경 UI 컴포넌트 (기존 `ProductQuantitySelector` 재사용)
+        - [x] 증가/감소 버튼
+        - [x] 직접 입력 필드
+        - [x] 재고 초과 시 버튼 비활성화 및 경고 메시지
+        - [x] 최소값: 1, 최대값: 현재 재고 수량
+      - [x] 재고 부족 처리
+        - [x] 장바구니 페이지 로드 시 각 아이템의 현재 재고 확인
+        - [x] 재고 부족 아이템 경고 표시 (뱃지 또는 메시지)
+        - [x] 수량 변경 시 실시간 재고 확인
+    - [x] 장바구니 아이템 삭제
+      - [x] 개별 삭제 Server Action (`removeCartItem()`)
+        - [x] Clerk 사용자 인증 확인
+        - [x] `cart_items` 테이블에서 DELETE
+        - [x] 에러 처리 및 로깅
+      - [x] 개별 삭제 UI
+        - [x] 삭제 버튼 클릭 시 확인 모달 (`components/ui/dialog` 사용)
+        - [x] 확인 후 삭제 실행
+      - [x] 일괄 삭제 기능 (Server Action 완료)
+        - [x] 선택된 아이템 삭제 Server Action (`removeCartItems()` - 여러 개)
+        - [ ] 체크박스 선택 UI 추가 (추후 구현)
+        - [ ] 일괄 삭제 버튼 및 확인 모달 (추후 구현)
+        - [ ] 전체 선택/해제 기능 (추후 구현)
+    - [x] 장바구니 총액 계산
+      - [x] 총액 계산 Server Action (`getCartTotal()`)
+        - [x] 장바구니 아이템 조회
+        - [x] 각 아이템의 소계 계산 (가격 × 수량)
+        - [x] 전체 합계 반환
+      - [x] 총액 표시 UI (`components/cart-summary.tsx`)
+        - [x] 상품 합계 표시
+        - [x] 총액 강조 표시
+        - [x] 주문하기 버튼 (Phase 3 다음 단계로 연결)
+        - [x] 반응형 디자인
+  - [x] Phase 3: UX 개선 (필수)
+    - [x] 장바구니 추가 후 Dialog (`components/add-to-cart-dialog.tsx`)
+      - [x] 장바구니 추가 성공 시 Dialog 표시
+      - [x] 추가된 상품 정보 표시 (상품명, 수량, 가격)
+      - [x] 두 가지 선택지 제공:
+        - [x] "장바구니로 이동" 버튼 → `/cart`로 리다이렉트
+        - [x] "쇼핑 계속하기" 버튼 → 현재 페이지 유지 (Dialog 닫기)
+      - [x] shadcn/ui Dialog 컴포넌트 사용
+    - [x] 장바구니 추가 버튼 개선 (`components/add-to-cart-button.tsx`)
+      - [x] 장바구니 추가 성공 시 Dialog 표시
+      - [x] Dialog 상태 관리
+    - [x] Navbar 장바구니 아이콘 (`components/Navbar.tsx`)
+      - [x] 장바구니 아이콘 컴포넌트 생성 (`components/cart-icon.tsx`)
+      - [x] 장바구니 아이콘 추가 (ShoppingCart, lucide-react)
+      - [x] 위치: 로고 오른쪽, 로그인 버튼 왼쪽
+      - [x] 장바구니 아이템 개수 뱃지 표시
+        - [x] 개수가 0보다 클 때만 표시
+        - [x] 뱃지 디자인 (빨간색 원, 흰색 숫자)
+      - [x] 클릭 시 `/cart`로 이동
+      - [x] 장바구니 개수 조회 Server Action (`getCartItemsCount()`)
+      - [x] 실시간 개수 업데이트 (5초마다 자동 갱신)
+        - [x] `useEffect` 및 `setInterval` 사용
+        - [ ] 더 나은 실시간 업데이트 (Context API 또는 전역 상태 관리) - 추후 개선
+  - [x] Phase 4: 추가 개선 (선택)
+    - [x] 장바구니 페이지 로딩 스켈레톤
+      - [x] 장바구니 아이템 스켈레톤 컴포넌트 (`components/cart-item-skeleton.tsx`)
+      - [x] `app/cart/loading.tsx` 생성
+    - [ ] 재고 부족 실시간 알림
+      - [ ] 장바구니 페이지에서 주기적으로 재고 확인 (선택사항)
+      - [ ] 재고 부족 아이템 강조 표시
+    - [ ] 장바구니 최대 수량 제한 (선택사항)
+      - [ ] 한 번에 담을 수 있는 최대 수량 설정
+    - [ ] 장바구니 아이템 정렬 (선택사항)
+      - [ ] 추가 순, 가격 순 등 정렬 옵션
 - [ ] 주문 프로세스 구현
-  - [ ] 주문 페이지 (`/checkout`)
-    - [ ] 페이지 라우트 생성
-    - [ ] 주문 정보 입력 폼
-      - [ ] 배송지 정보 (shipping_address JSONB)
-      - [ ] 주문 메모 (order_note)
-    - [ ] 주문 요약 (상품 목록, 총액)
-    - [ ] 폼 유효성 검사 (react-hook-form + Zod)
-  - [ ] 주문 생성 Server Action
-    - [ ] `orders` 테이블 INSERT
-    - [ ] `order_items` 테이블 INSERT (여러 개)
-    - [ ] 트랜잭션 처리 (모두 성공 또는 모두 롤백)
-    - [ ] 장바구니 비우기 (주문 성공 시)
-  - [ ] 주문 완료 페이지 (`/orders/[id]`)
-    - [ ] 주문 완료 확인 페이지
-    - [ ] 주문 번호 표시
-    - [ ] 주문 상세 정보 표시
+    - [x] Phase 1: 주문 페이지 기본 구조 (필수)
+      - [x] 주문 타입 정의 (`types/order.ts`)
+        - [x] `Order` 인터페이스 정의
+        - [x] `OrderItem` 인터페이스 정의
+        - [x] `ShippingAddress` 인터페이스 정의
+        - [x] `OrderWithItems` 타입 정의 (JOIN 결과)
+        - [x] `OrderStatus` 타입 정의
+      - [x] 주문 페이지 (`/checkout`)
+        - [x] 페이지 라우트 생성 (`app/checkout/page.tsx`)
+        - [x] Clerk 인증 확인 (미로그인 시 리다이렉트)
+        - [x] 장바구니 아이템 조회 및 표시
+        - [x] 빈 장바구니 처리 (장바구니 페이지로 리다이렉트)
+        - [x] 주문 상품 목록 표시
+        - [x] 주문 요약 컴포넌트 통합
+    - [ ] Phase 2: 주문 정보 입력 폼 (필수)
+      - [ ] 배송지 정보 입력 폼
+        - [ ] 이름 (받는 사람)
+        - [ ] 전화번호
+        - [ ] 우편번호
+        - [ ] 주소 (기본주소, 상세주소)
+        - [ ] `shipping_address` JSONB 구조 정의
+      - [ ] 주문 메모 입력 (`order_note`)
+      - [ ] 폼 유효성 검사 (react-hook-form + Zod)
+        - [ ] Zod 스키마 정의
+        - [ ] 필수 필드 검증
+        - [ ] 전화번호 형식 검증
+        - [ ] 우편번호 형식 검증
+      - [ ] 주문 요약 컴포넌트
+        - [ ] 상품 목록 표시
+        - [ ] 총액 표시
+        - [ ] 장바구니 데이터 기반 계산
+    - [ ] Phase 3: 주문 생성 Server Action (필수)
+      - [ ] 주문 생성 Server Action (`actions/orders.ts`)
+        - [ ] `createOrder()` 함수 구현
+        - [ ] Clerk 사용자 인증 확인
+        - [ ] 장바구니 아이템 조회
+        - [ ] 장바구니 비어있는지 확인
+        - [ ] 트랜잭션 처리
+          - [ ] `orders` 테이블 INSERT
+          - [ ] `order_items` 테이블 INSERT (여러 개)
+          - [ ] 장바구니 비우기 (`cart_items` DELETE)
+        - [ ] 에러 처리 및 로깅
+      - [ ] 주문 생성 폼 제출 핸들러
+        - [ ] 폼 데이터 검증
+        - [ ] Server Action 호출
+        - [ ] 성공 시 주문 완료 페이지로 리다이렉트
+        - [ ] 에러 처리 및 피드백
+    - [ ] Phase 4: 주문 완료 페이지 (필수)
+      - [ ] 주문 완료 페이지 (`/orders/[id]`)
+        - [ ] 동적 라우트 생성 (`app/orders/[id]/page.tsx`)
+        - [ ] 주문 조회 Server Action (`getOrderById()`)
+          - [ ] `orders` 테이블 조회
+          - [ ] `order_items` 테이블 조회 (JOIN)
+          - [ ] 본인 주문만 조회 가능하도록 권한 확인
+          - [ ] 에러 처리 및 로깅
+        - [ ] 주문 정보 표시
+          - [ ] 주문 번호 (ID 또는 UUID 일부)
+          - [ ] 주문 날짜
+          - [ ] 주문 상태
+          - [ ] 배송지 정보
+          - [ ] 주문 메모
+          - [ ] 주문 상품 목록
+          - [ ] 총액 표시
+        - [ ] 404 처리 (존재하지 않는 주문)
 - [ ] 주문 테이블 연동
   - [ ] 주문 상태 관리
   - [ ] 주문 조회 기능

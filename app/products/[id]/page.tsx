@@ -27,7 +27,7 @@ import { getProductById } from "@/actions/get-products";
 import { AddToCartButton } from "@/components/add-to-cart-button";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import { getCategoryName } from "@/constants/categories";
+import { getCategoryName, CATEGORIES } from "@/constants/categories";
 
 interface ProductDetailPageProps {
   params: Promise<{ id: string }>;
@@ -113,7 +113,7 @@ export default async function ProductDetailPage({
               {product.category && (
                 <div>
                   <span className="inline-block rounded-full bg-blue-100 px-3 py-1 text-xs font-medium uppercase tracking-wide text-blue-800 dark:bg-blue-900/30 dark:text-blue-300">
-                    {getCategoryName(product.category)}
+                    {getCategoryName(product.category as keyof typeof CATEGORIES | null)}
                   </span>
                 </div>
               )}
@@ -175,6 +175,7 @@ export default async function ProductDetailPage({
                   </h2>
                   <AddToCartButton
                     productId={product.id}
+                    product={product}
                     maxQuantity={product.stock_quantity}
                     disabled={isOutOfStock}
                   />
