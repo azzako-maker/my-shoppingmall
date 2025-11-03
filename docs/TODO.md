@@ -32,6 +32,8 @@
   - [x] 인기 상품 섹션 (주문량 또는 조회수 기준 인기 상품 표시)
     - [x] `getPopularProducts()` 함수 구현 (주문량 기준, 최대 6개)
     - [x] 홈페이지에 인기 상품 섹션 추가 ("전체 상품" 섹션 위)
+  - [x] 로딩 스켈레톤 UI 구현 (2025-01-XX)
+    - [x] 홈페이지 로딩 상태 (`app/loading.tsx`)
 - [x] 상품 타입 정의
   - [x] `types/product.ts` 생성 완료
 - [x] 상품 조회 Server Action
@@ -60,7 +62,18 @@
     - [x] 전체 상품 개수 표시 추가
     - [x] 빈 상태 UI 개선 (아이콘, 메시지)
     - [x] 페이지 배경색 및 레이아웃 최적화
-  - [ ] 페이지네이션 또는 무한 스크롤
+  - [x] 로딩 스켈레톤 UI 구현 (2025-01-XX)
+    - [x] shadcn/ui Skeleton 컴포넌트 설치
+    - [x] 상품 카드 스켈레톤 컴포넌트 생성 (`components/product-card-skeleton.tsx`)
+    - [x] 상품 목록 페이지 로딩 상태 (`app/products/loading.tsx`)
+    - [x] 상품 상세 페이지 로딩 상태 (`app/products/[id]/loading.tsx`)
+    - [x] 홈페이지 로딩 상태 (`app/loading.tsx`)
+  - [x] 페이지네이션 또는 무한 스크롤
+    - [x] 페이지네이션 구현 완료 (2025-01-XX)
+      - [x] Server Action 수정 (페이지네이션 지원)
+      - [x] 페이지네이션 컴포넌트 생성 (`components/products-pagination.tsx`)
+      - [x] URL 쿼리 파라미터 연동
+      - [x] 반응형 디자인
   - [x] 에러 핸들링
   - [x] 카테고리 필터 UI 통합
 - [x] 카테고리 필터링
@@ -280,3 +293,7 @@
 - [ ] 접근성 개선 (a11y)
 - [ ] SEO 최적화
 - [ ] 성능 모니터링 설정
+- [x] 로딩 스켈레톤 UI 구현 (2025-01-XX)
+  - [x] shadcn/ui Skeleton 컴포넌트 설치
+  - [x] 상품 카드 스켈레톤 컴포넌트
+  - [x] 페이지별 로딩 상태 (홈페이지, 상품 목록, 상품 상세)
