@@ -69,16 +69,89 @@
   - [x] 필터링 로직 구현 (`getProductsByCategory()`)
   - [x] URL 쿼리 파라미터 연동
   - [x] 필터 상태 관리
-- [ ] 상품 상세 페이지 (`/products/[id]`)
-  - [ ] 동적 라우트 생성
-  - [ ] 상품 상세 정보 조회 API/Server Action
-  - [ ] 상품 이미지 표시 (필요 시)
-  - [ ] 장바구니 추가 버튼
-  - [ ] 수량 선택 UI
-  - [ ] 재고 상태 표시
-- [ ] 어드민 상품 등록 가이드
-  - [ ] Supabase Dashboard 사용 가이드 문서
-  - [ ] 상품 등록 시 필수 필드 안내
+- [x] 상품 상세 페이지 (`/products/[id]`)
+  - [x] Phase 1: 기본 구조 (필수)
+    - [x] 동적 라우트 생성 (`app/products/[id]/page.tsx`)
+      - [x] Next.js 15 App Router 동적 라우트 사용
+      - [x] URL 파라미터에서 상품 ID 추출
+      - [x] Server Component로 구현 (SEO 최적화)
+      - [x] 에러 처리 (상품 없음, 비활성화된 상품, 잘못된 ID)
+      - [x] 404 페이지 (`app/products/[id]/not-found.tsx`) 생성
+    - [x] 상품 조회 Server Action 구현 (`actions/get-products.ts`)
+      - [x] `getProductById(productId: string)` 함수 추가
+      - [x] UUID 형식 검증
+      - [x] 활성화된 상품만 반환 (`is_active = true`)
+      - [x] 존재하지 않는 상품 또는 비활성화된 상품은 `null` 반환
+      - [x] 에러 핸들링 및 로깅
+    - [x] 상품 상세 정보 기본 표시
+      - [x] 상품명 (큰 제목)
+      - [x] 가격 (큰 폰트, 강조)
+      - [x] 카테고리 표시 (태그 형태)
+      - [x] 상품 설명 (description)
+      - [x] 반응형 레이아웃 (데스크톱: 2열, 모바일: 1열)
+      - [x] 뒤로가기 버튼 추가
+  - [x] Phase 2: 재고 및 수량 선택 (필수)
+    - [x] 재고 상태 표시
+      - [x] 재고 있음: "재고 {quantity}개"
+      - [x] 재고 부족: "재고 부족 ({quantity}개 남음)" (10개 미만)
+      - [x] 품절: "품절" (0개)
+    - [x] 수량 선택 UI 컴포넌트 (`components/product-quantity-selector.tsx`)
+      - [x] 수량 증가/감소 버튼
+      - [x] 숫자 입력 필드 (직접 입력 가능)
+      - [x] 최소값: 1, 최대값: 현재 재고 수량
+      - [x] 재고 초과 시 버튼 비활성화 및 경고 메시지
+      - [x] 반응형 디자인
+      - [x] 품절 상태 처리
+  - [x] Phase 3: 장바구니 추가 (필수)
+    - [x] 장바구니 추가 Server Action (`actions/cart.ts` 새로 생성)
+      - [x] `addToCart(productId: string, quantity: number)` 함수 구현
+      - [x] Clerk 사용자 인증 확인 (서버 사이드 `auth()` 사용)
+      - [x] 상품 존재 및 활성화 확인
+      - [x] 재고 수량 확인
+      - [x] 장바구니에 이미 같은 상품이 있는지 확인
+        - [x] 있으면: 수량 증가 (재고 범위 내)
+        - [x] 없으면: 새로 추가
+      - [x] `cart_items` 테이블 INSERT 또는 UPDATE
+      - [x] Service Role 클라이언트 사용하여 RLS 우회
+      - [x] 에러 처리 및 로깅
+    - [x] 장바구니 추가 UI (`components/add-to-cart-button.tsx`)
+      - [x] 장바구니 추가 버튼
+      - [x] 수량 선택 컴포넌트 통합
+      - [x] Clerk 인증 확인 필요
+        - [x] 미로그인 시: "로그인 후 장바구니에 추가할 수 있습니다" 메시지
+        - [x] 로그인 시: 장바구니 추가 Server Action 호출
+      - [x] 재고 확인 (선택한 수량이 재고보다 많으면 에러 메시지)
+      - [x] 성공/실패 피드백
+        - [x] 성공: 성공 메시지 표시 (자동 제거)
+        - [x] 실패: 에러 메시지 표시 (자동 제거)
+      - [x] 로딩 상태 표시
+  - [ ] Phase 4: UI/UX 개선 (선택)
+    - [x] 상품 이미지 영역
+      - [x] 현재는 플레이스홀더 이미지 사용 (향후 실제 이미지로 확장 가능)
+      - [x] 큰 이미지 영역 (데스크톱: 왼쪽, 모바일: 상단)
+      - [x] 재고 상태 뱃지 (품절 표시)
+      - [ ] 이미지 확대 기능 (선택사항, MVP 이후)
+    - [ ] 브레드크럼 네비게이션 (선택사항)
+      - [ ] 홈 > 상품 목록 > 상품명 (또는 홈 > 카테고리명 > 상품명)
+      - [ ] 클릭 가능한 링크 제공
+    - [ ] 관련 상품 추천 (선택사항, MVP 이후)
+      - [ ] 같은 카테고리 상품 추천
+- [x] 어드민 상품 등록 가이드
+  - [x] Supabase Dashboard 사용 가이드 문서 (`docs/admin-product-guide.md`)
+    - [x] Supabase Dashboard 접근 방법 안내
+    - [x] 상품 등록 단계별 가이드 작성
+    - [x] 필수 필드 및 선택 필드 상세 설명
+    - [x] 카테고리 목록 및 사용 방법 안내
+    - [x] 주의사항 및 실수 방지 가이드
+    - [x] 데이터 수정 및 삭제 방법 안내
+    - [x] FAQ (자주 묻는 질문) 섹션 추가
+    - [x] 문제 해결 가이드 추가
+  - [x] 상품 등록 시 필수 필드 안내
+    - [x] 필수 필드 설명 (name, price)
+    - [x] 선택 필드 설명 (description, category, stock_quantity, is_active)
+    - [x] 자동 생성 필드 설명 (id, created_at, updated_at)
+    - [x] 필드별 예시 값 제공
+    - [x] 필드별 제약 사항 설명
 
 ## Phase 3: 장바구니 & 주문 (1주)
 

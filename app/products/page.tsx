@@ -24,11 +24,12 @@
 
 import { ProductCard } from "@/components/product-card";
 import { CategoryFilter } from "@/components/category-filter";
+import { ProductsPagination } from "@/components/products-pagination";
 import { getProductsByCategory } from "@/actions/get-products";
 import { isValidCategory } from "@/constants/categories";
 
 interface ProductsPageProps {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; page?: string }>;
 }
 
 export default async function ProductsPage({
@@ -37,11 +38,13 @@ export default async function ProductsPage({
   try {
     console.group("[ProductsPage] 상품 목록 페이지 렌더링 시작");
 
-    // URL 쿼리 파라미터에서 카테고리 추출
+    // URL 쿼리 파라미터에서 카테고리 및 페이지 추출
     const params = await searchParams;
     const categoryParam = params.category || null;
+    const pageParam = params.page;
 
     console.log("[ProductsPage] 카테고리 파라미터:", categoryParam);
+    console.log("[ProductsPage] 페이지 파라미터:", pageParam);
 
     // 유효한 카테고리인지 확인
     const category =
@@ -56,13 +59,33 @@ export default async function ProductsPage({
       );
     }
 
-    // 카테고리별 상품 조회 (limit 제한 없이 전체 조회)
-    const products = await getProductsByCategory(category, 1000);
+    // 페이지 번호 파싱 및 유효성 검사
+    let page = 1;
+    if (pageParam) {
+      const parsedPage = parseInt(pageParam, 10);
+      if (!isNaN(parsedPage) && parsedPage > 0) {
+        page = parsedPage;
+      } else {
+        console.warn(
+          "[ProductsPage] 유효하지 않은 페이지 번호, 1로 조정:",
+          pageParam,
+        );
+      }
+    }
+
+    // 카테고리별 상품 조회 (페이지네이션 지원)
+    const { products, total, totalPages, currentPage } =
+      await getProductsByCategory(category, page, 12);
 
     console.log(
-      "[ProductsPage] 조회 완료, 상품 개수:",
-      products.length,
-      category ? `(카테고리: ${category})` : "(전체)",
+      "[ProductsPage] 조회 완료:",
+      {
+        상품_개수: products.length,
+        전체_상품_개수: total,
+        현재_페이지: currentPage,
+        전체_페이지_수: totalPages,
+        카테고리: category || "전체",
+      },
     );
     console.groupEnd();
 
@@ -75,9 +98,9 @@ export default async function ProductsPage({
               <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl dark:text-gray-100">
                 상품 목록
               </h1>
-              {products.length > 0 && (
+              {total > 0 && (
                 <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                  총 {products.length}개의 상품
+                  총 {total}개의 상품
                 </p>
               )}
             </div>
@@ -86,11 +109,19 @@ export default async function ProductsPage({
 
           {/* 상품 그리드 */}
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
-              {products.map((product) => (
-                <ProductCard key={product.id} product={product} />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
+                {products.map((product) => (
+                  <ProductCard key={product.id} product={product} />
+                ))}
+              </div>
+              {/* 페이지네이션 */}
+              <ProductsPagination
+                currentPage={currentPage}
+                totalPages={totalPages}
+                total={total}
+              />
+            </>
           ) : (
             <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900">
               <svg

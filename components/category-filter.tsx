@@ -41,18 +41,24 @@ export function CategoryFilter() {
   /**
    * 카테고리 변경 핸들러
    * 선택된 카테고리에 따라 URL을 업데이트
+   * 카테고리 변경 시 페이지를 1로 리셋
    */
   const handleCategoryChange = (categoryId: string) => {
     console.log("[CategoryFilter] 카테고리 변경:", categoryId);
     
+    // URL 쿼리 파라미터에서 page 제거하고 새로 설정
+    const params = new URLSearchParams();
+    
     // "전체" 선택 시 (value가 "all"인 경우)
     if (categoryId === "all" || categoryId === "") {
+      // page 파라미터 없이 전체 상품으로 이동
       router.push("/products");
-      console.log("[CategoryFilter] 전체 상품으로 이동");
+      console.log("[CategoryFilter] 전체 상품으로 이동 (페이지 1로 리셋)");
     } else {
       // 특정 카테고리 선택 시
-      router.push(`/products?category=${categoryId}`);
-      console.log("[CategoryFilter] 카테고리 페이지로 이동:", categoryId);
+      params.set("category", categoryId);
+      router.push(`/products?${params.toString()}`);
+      console.log("[CategoryFilter] 카테고리 페이지로 이동:", categoryId, "(페이지 1로 리셋)");
     }
   };
 

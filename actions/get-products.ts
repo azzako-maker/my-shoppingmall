@@ -87,21 +87,89 @@ export async function getAllProducts(limit: number = 12): Promise<Product[]> {
 }
 
 /**
- * 카테고리별 상품 조회
+ * 카테고리별 상품 개수 조회
  * @param category 카테고리 ID (null이면 전체 상품 조회)
- * @param limit 조회할 상품 개수 (기본값: 12)
- * @returns 카테고리별 상품 배열
+ * @returns 활성화된 상품 개수
+ */
+export async function getProductsCountByCategory(
+  category: string | null,
+): Promise<number> {
+  try {
+    console.group("[getProductsCountByCategory] 상품 개수 조회 시작");
+    console.log("카테고리:", category || "전체");
+
+    const supabase = createClerkSupabaseClient();
+
+    let query = supabase
+      .from("products")
+      .select("*", { count: "exact", head: true })
+      .eq("is_active", true);
+
+    // 카테고리가 유효한 경우 필터링
+    if (category && isValidCategory(category)) {
+      query = query.eq("category", category);
+      console.log("[getProductsCountByCategory] 카테고리 필터 적용:", category);
+    }
+
+    const { count, error } = await query;
+
+    if (error) {
+      console.error("[getProductsCountByCategory] 에러:", error);
+      throw error;
+    }
+
+    console.log("[getProductsCountByCategory] 조회 성공, 상품 개수:", count || 0);
+    console.groupEnd();
+
+    return count || 0;
+  } catch (error) {
+    console.error("[getProductsCountByCategory] 예외 발생:", error);
+    console.groupEnd();
+    throw error;
+  }
+}
+
+/**
+ * 카테고리별 상품 조회 (페이지네이션 지원)
+ * @param category 카테고리 ID (null이면 전체 상품 조회)
+ * @param page 현재 페이지 번호 (1부터 시작, 기본값: 1)
+ * @param pageSize 페이지당 상품 개수 (기본값: 12)
+ * @returns 페이지네이션 정보를 포함한 상품 데이터
  */
 export async function getProductsByCategory(
   category: string | null,
-  limit: number = 12,
-): Promise<Product[]> {
+  page: number = 1,
+  pageSize: number = 12,
+): Promise<{ products: Product[]; total: number; totalPages: number; currentPage: number }> {
   try {
     console.group("[getProductsByCategory] 카테고리별 상품 조회 시작");
     console.log("카테고리:", category || "전체");
-    console.log("조회 개수:", limit);
+    console.log("페이지:", page, "페이지 크기:", pageSize);
+
+    // 페이지 번호 유효성 검사
+    if (page < 1) {
+      console.warn("[getProductsByCategory] 페이지 번호가 1보다 작음, 1로 조정");
+      page = 1;
+    }
 
     const supabase = createClerkSupabaseClient();
+
+    // 전체 개수 조회
+    const total = await getProductsCountByCategory(category);
+    const totalPages = Math.ceil(total / pageSize);
+
+    console.log("[getProductsByCategory] 전체 상품 개수:", total, "전체 페이지 수:", totalPages);
+
+    // 페이지 범위 초과 처리
+    if (page > totalPages && totalPages > 0) {
+      console.warn(
+        "[getProductsByCategory] 요청한 페이지가 범위를 초과, 마지막 페이지로 조정",
+      );
+      page = totalPages;
+    }
+
+    // offset 계산
+    const offset = (page - 1) * pageSize;
 
     let query = supabase
       .from("products")
@@ -119,7 +187,9 @@ export async function getProductsByCategory(
       );
     }
 
-    const { data, error } = await query.order("created_at", { ascending: false }).limit(limit);
+    const { data, error } = await query
+      .order("created_at", { ascending: false })
+      .range(offset, offset + pageSize - 1);
 
     if (error) {
       console.error("[getProductsByCategory] 에러:", error);
@@ -132,9 +202,77 @@ export async function getProductsByCategory(
     );
     console.groupEnd();
 
-    return (data as Product[]) || [];
+    return {
+      products: (data as Product[]) || [],
+      total,
+      totalPages: totalPages || 1,
+      currentPage: page,
+    };
   } catch (error) {
     console.error("[getProductsByCategory] 예외 발생:", error);
+    console.groupEnd();
+    throw error;
+  }
+}
+
+/**
+ * 상품 ID로 단일 상품 조회
+ * @param productId 상품 ID (UUID)
+ * @returns 상품 정보 또는 null (존재하지 않거나 비활성화된 경우)
+ */
+export async function getProductById(
+  productId: string,
+): Promise<Product | null> {
+  try {
+    console.group("[getProductById] 상품 조회 시작");
+    console.log("상품 ID:", productId);
+
+    // UUID 형식 검증
+    const uuidRegex =
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+    if (!uuidRegex.test(productId)) {
+      console.warn("[getProductById] 잘못된 UUID 형식:", productId);
+      console.groupEnd();
+      return null;
+    }
+
+    const supabase = createClerkSupabaseClient();
+
+    const { data, error } = await supabase
+      .from("products")
+      .select("*")
+      .eq("id", productId)
+      .eq("is_active", true)
+      .single();
+
+    if (error) {
+      if (error.code === "PGRST116") {
+        // 레코드를 찾을 수 없음
+        console.log("[getProductById] 상품을 찾을 수 없음:", productId);
+        console.groupEnd();
+        return null;
+      }
+      console.error("[getProductById] 에러:", error);
+      console.groupEnd();
+      throw error;
+    }
+
+    if (!data) {
+      console.log("[getProductById] 상품 데이터 없음:", productId);
+      console.groupEnd();
+      return null;
+    }
+
+    console.log("[getProductById] 조회 성공:", {
+      상품명: data.name,
+      가격: data.price,
+      재고: data.stock_quantity,
+    });
+    console.groupEnd();
+
+    return data as Product;
+  } catch (error) {
+    console.error("[getProductById] 예외 발생:", error);
     console.groupEnd();
     throw error;
   }
