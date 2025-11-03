@@ -4,14 +4,13 @@
  *
  * 장바구니 추가 성공 시 표시되는 Dialog
  * - 추가된 상품 정보 표시
- * - "장바구니로 이동" 버튼
- * - "쇼핑 계속하기" 버튼
+ * - "장바구니로 이동" 버튼 (클릭 시 /cart로 이동)
+ * - "쇼핑 계속하기" 버튼 (클릭 시 /products로 이동)
  */
 
 "use client";
 
 import { useRouter } from "next/navigation";
-import Link from "next/link";
 import {
   Dialog,
   DialogContent,
@@ -47,6 +46,7 @@ export function AddToCartDialog({
 
   const handleContinueShopping = () => {
     onOpenChange(false);
+    router.push("/products");
   };
 
   return (

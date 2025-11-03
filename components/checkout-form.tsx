@@ -52,6 +52,7 @@ import {
   type CheckoutFormData,
 } from "@/lib/schemas/checkout";
 import { createOrder } from "@/actions/orders";
+import { ShippingAddress } from "@/types/order";
 
 interface CheckoutFormProps {
   onSubmit?: (data: CheckoutFormData) => void | Promise<void>;
@@ -92,7 +93,7 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
 
       // Server Action 호출
       const result = await createOrder(
-        data.shippingAddress,
+        data.shippingAddress as ShippingAddress,
         data.order_note || null,
       );
 

@@ -6,7 +6,6 @@
  */
 
 import { z } from "zod";
-import { ShippingAddress } from "@/types/order";
 
 /**
  * 배송지 정보 검증 스키마
@@ -35,7 +34,7 @@ export const shippingAddressSchema = z.object({
     .string()
     .min(1, "상세주소를 입력해주세요.")
     .max(100, "상세주소는 100자 이하여야 합니다."),
-}) satisfies z.ZodType<ShippingAddress>;
+});
 
 /**
  * 주문 폼 전체 검증 스키마

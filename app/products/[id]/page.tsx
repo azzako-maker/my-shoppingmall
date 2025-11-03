@@ -19,14 +19,15 @@
  * - actions/get-products: 상품 조회 Server Action
  * - components/product-quantity-selector: 수량 선택 컴포넌트
  * - components/AddToCartButton: 장바구니 추가 버튼 컴포넌트
+ * - components/product-breadcrumb: 브레드크럼 네비게이션 컴포넌트
  */
 
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getProductById } from "@/actions/get-products";
 import { AddToCartButton } from "@/components/add-to-cart-button";
+import { ProductBreadcrumb } from "@/components/product-breadcrumb";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
 import { getCategoryName, CATEGORIES } from "@/constants/categories";
 
 interface ProductDetailPageProps {
@@ -70,13 +71,13 @@ export default async function ProductDetailPage({
     return (
       <main className="min-h-[calc(100vh-80px)] bg-gray-50 px-4 py-6 dark:bg-gray-950 sm:px-6 sm:py-8 md:px-8 md:py-12">
         <div className="mx-auto max-w-7xl">
-          {/* 뒤로가기 버튼 */}
-          <Link href="/products">
-            <Button variant="ghost" size="sm" className="mb-6">
-              <ArrowLeft className="mr-2 h-4 w-4" />
-              상품 목록으로
-            </Button>
-          </Link>
+          {/* 브레드크럼 네비게이션 */}
+          <div className="mb-6">
+            <ProductBreadcrumb
+              productName={product.name}
+              category={product.category as keyof typeof CATEGORIES | null}
+            />
+          </div>
 
           {/* 상품 정보 그리드 */}
           <div className="grid gap-8 md:grid-cols-2">
