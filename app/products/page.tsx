@@ -56,8 +56,8 @@ export default async function ProductsPage({
       );
     }
 
-    // 카테고리별 상품 조회
-    const products = await getProductsByCategory(category);
+    // 카테고리별 상품 조회 (limit 제한 없이 전체 조회)
+    const products = await getProductsByCategory(category, 1000);
 
     console.log(
       "[ProductsPage] 조회 완료, 상품 개수:",
@@ -67,27 +67,54 @@ export default async function ProductsPage({
     console.groupEnd();
 
     return (
-      <main className="min-h-[calc(100vh-80px)] px-4 py-8 md:px-8 md:py-16">
-        <div className="mx-auto max-w-7xl space-y-8">
+      <main className="min-h-[calc(100vh-80px)] bg-gray-50 px-4 py-6 dark:bg-gray-950 sm:px-6 sm:py-8 md:px-8 md:py-12">
+        <div className="mx-auto max-w-7xl">
           {/* 페이지 헤더 및 카테고리 필터 */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <h1 className="text-3xl font-bold md:text-4xl">상품 목록</h1>
+          <div className="mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-gray-900 sm:text-3xl md:text-4xl dark:text-gray-100">
+                상품 목록
+              </h1>
+              {products.length > 0 && (
+                <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+                  총 {products.length}개의 상품
+                </p>
+              )}
+            </div>
             <CategoryFilter />
           </div>
 
           {/* 상품 그리드 */}
           {products.length > 0 ? (
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:grid-cols-3 md:gap-6 lg:grid-cols-4 xl:grid-cols-5">
               {products.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           ) : (
-            <div className="rounded-lg border border-gray-200 bg-gray-50 p-12 text-center dark:border-gray-800 dark:bg-gray-900">
-              <p className="text-lg text-gray-600 dark:text-gray-400">
+            <div className="rounded-lg border border-gray-200 bg-white p-12 text-center shadow-sm dark:border-gray-800 dark:bg-gray-900">
+              <svg
+                className="mx-auto h-12 w-12 text-gray-400 dark:text-gray-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"
+                />
+              </svg>
+              <p className="mt-4 text-lg font-medium text-gray-900 dark:text-gray-100">
                 {category
                   ? "해당 카테고리에 상품이 없습니다."
                   : "등록된 상품이 없습니다."}
+              </p>
+              <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                {category
+                  ? "다른 카테고리를 선택해보세요."
+                  : "곧 새로운 상품이 추가될 예정입니다."}
               </p>
             </div>
           )}
