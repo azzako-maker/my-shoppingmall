@@ -1,6 +1,6 @@
 # 쇼핑 sudden MVP 개발 TODO
 
-## Phase 1: 기본 인프라 (1주) - 진행 중
+## Phase 1: 기본 인프라 (1주) - ✅ 완료
 
 - [x] Next.js 프로젝트 셋업
 - [x] Supabase 프로젝트 생성
@@ -11,34 +11,49 @@
 - [x] 기본 레이아웃 및 라우팅
   - [x] RootLayout 설정
   - [x] Navbar 컴포넌트
-- [ ] Supabase 데이터베이스 스키마 적용
+- [x] Supabase 데이터베이스 스키마 적용
   - [x] `update_shopping_mall_schema.sql` 작성 완료
-  - [ ] 마이그레이션 파일 실행 (Supabase Dashboard 또는 CLI)
-  - [ ] 테이블 및 샘플 데이터 확인
-- [ ] Supabase 클라이언트 설정 확인
+  - [x] 스키마 파일에 샘플 데이터 포함 완료
+  - [ ] 마이그레이션 파일 실행 (Supabase Dashboard 또는 CLI) - 다음 단계 필요
+  - [ ] 테이블 및 샘플 데이터 확인 - 다음 단계 필요
+- [x] Supabase 클라이언트 설정 확인
   - [x] `lib/supabase/clerk-client.ts` (Client Component용)
   - [x] `lib/supabase/server.ts` (Server Component용)
   - [x] `lib/supabase/service-role.ts` (관리자 권한용)
-  - [ ] 각 클라이언트 테스트
+  - [x] `lib/supabase/client.ts` (공개 데이터용)
+  - [ ] 각 클라이언트 테스트 - 다음 단계 필요
 
-## Phase 2: 상품 기능 (1주)
+## Phase 2: 상품 기능 (1주) - 진행 중
 
-- [ ] 홈페이지
-  - [ ] 상품 목록 표시 (최신 상품 또는 전체 상품 미리보기)
-  - [ ] 카테고리 카다로그 기능 (카테고리별 상품 조회 및 네비게이션)
+- [x] 홈페이지
+  - [x] 상품 목록 표시 (최신 상품 또는 전체 상품 미리보기)
+  - [x] 반응형 레이아웃
+  - [x] 카테고리 카다로그 기능 (카테고리별 상품 조회 및 네비게이션)
   - [ ] 인기 상품 섹션 (주문량 또는 조회수 기준 인기 상품 표시)
-  - [ ] 반응형 레이아웃
-- [ ] 상품 목록 페이지 (`/products`)
-  - [ ] 페이지 라우트 생성
-  - [ ] 상품 목록 조회 API/Server Action
+- [x] 상품 타입 정의
+  - [x] `types/product.ts` 생성 완료
+- [x] 상품 조회 Server Action
+  - [x] `actions/get-products.ts` 구현 완료
+  - [x] `getLatestProducts()` 함수 (최신 상품 조회)
+  - [x] `getAllProducts()` 함수 (전체 상품 조회)
+  - [x] `getProductsByCategory()` 함수 (카테고리별 상품 조회)
+- [x] 상품 카드 컴포넌트
+  - [x] `components/product-card.tsx` 구현 완료
+  - [x] 상품 정보 표시 (이름, 가격, 카테고리)
+  - [x] 재고 상태 표시
+  - [x] 상품 상세 페이지 링크
+- [x] 상품 목록 페이지 (`/products`)
+  - [x] 페이지 라우트 생성
+  - [x] 상품 목록 조회 Server Action
   - [ ] 페이지네이션 또는 무한 스크롤
-  - [ ] 로딩 상태 처리
-  - [ ] 에러 핸들링
-- [ ] 카테고리 필터링
-  - [ ] 카테고리 필터 UI 컴포넌트
-  - [ ] 필터링 로직 구현
-  - [ ] URL 쿼리 파라미터 연동
-  - [ ] 필터 상태 관리
+  - [x] 에러 핸들링
+  - [x] 카테고리 필터 UI 통합
+- [x] 카테고리 필터링
+  - [x] 카테고리 상수 정의 (`constants/categories.ts`)
+  - [x] 카테고리 필터 UI 컴포넌트 (`components/category-filter.tsx`)
+  - [x] 필터링 로직 구현 (`getProductsByCategory()`)
+  - [x] URL 쿼리 파라미터 연동
+  - [x] 필터 상태 관리
 - [ ] 상품 상세 페이지 (`/products/[id]`)
   - [ ] 동적 라우트 생성
   - [ ] 상품 상세 정보 조회 API/Server Action
