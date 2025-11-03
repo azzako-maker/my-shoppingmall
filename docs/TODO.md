@@ -229,11 +229,19 @@
       - [x] 개별 삭제 UI
         - [x] 삭제 버튼 클릭 시 확인 모달 (`components/ui/dialog` 사용)
         - [x] 확인 후 삭제 실행
-      - [x] 일괄 삭제 기능 (Server Action 완료)
+      - [x] 일괄 삭제 기능 (완료)
         - [x] 선택된 아이템 삭제 Server Action (`removeCartItems()` - 여러 개)
-        - [ ] 체크박스 선택 UI 추가 (추후 구현)
-        - [ ] 일괄 삭제 버튼 및 확인 모달 (추후 구현)
-        - [ ] 전체 선택/해제 기능 (추후 구현)
+        - [x] 체크박스 선택 UI 추가
+          - [x] shadcn/ui Checkbox 컴포넌트 설치
+          - [x] `components/cart-item-card.tsx`에 체크박스 prop 추가
+        - [x] 일괄 삭제 버튼 및 확인 모달
+          - [x] `components/cart-item-list.tsx` Client Component 생성
+          - [x] 선택된 아이템 개수 표시
+          - [x] 일괄 삭제 확인 모달 구현
+        - [x] 전체 선택/해제 기능
+          - [x] 전체 선택 체크박스
+          - [x] 선택 상태 관리 (`useState`)
+          - [x] 전체 선택 시 모든 아이템 선택/해제
     - [x] 장바구니 총액 계산
       - [x] 총액 계산 Server Action (`getCartTotal()`)
         - [x] 장바구니 아이템 조회

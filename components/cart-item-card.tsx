@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { ProductQuantitySelector } from "@/components/product-quantity-selector";
 import {
   Dialog,
@@ -33,9 +34,16 @@ import {
 interface CartItemCardProps {
   item: CartItemWithProduct;
   onUpdate?: () => void; // 업데이트 후 콜백
+  checked?: boolean; // 체크박스 선택 상태
+  onCheckedChange?: (checked: boolean) => void; // 체크박스 상태 변경 핸들러
 }
 
-export function CartItemCard({ item, onUpdate }: CartItemCardProps) {
+export function CartItemCard({
+  item,
+  onUpdate,
+  checked = false,
+  onCheckedChange,
+}: CartItemCardProps) {
   const router = useRouter();
   const { product, quantity, id } = item;
   const [currentQuantity, setCurrentQuantity] = useState(quantity);
@@ -100,9 +108,15 @@ export function CartItemCard({ item, onUpdate }: CartItemCardProps) {
   return (
     <>
       <div className="flex gap-4 rounded-lg border border-gray-200 bg-white p-4 dark:border-gray-800 dark:bg-gray-900">
-        {/* 체크박스 (일괄 삭제용, 추후 구현) */}
+        {/* 체크박스 (일괄 삭제용) */}
         <div className="flex-shrink-0 pt-1">
-          {/* TODO: 체크박스 추가 */}
+          {onCheckedChange && (
+            <Checkbox
+              checked={checked}
+              onCheckedChange={onCheckedChange}
+              aria-label={`${product.name} 선택`}
+            />
+          )}
         </div>
 
         {/* 상품 이미지 (플레이스홀더) */}
