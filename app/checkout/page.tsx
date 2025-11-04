@@ -23,8 +23,8 @@
  */
 
 import { redirect } from "next/navigation";
-import { auth } from "@clerk/nextjs/server";
-import { getCartItems } from "@/actions/cart";
+import { auth, clerkClient } from "@clerk/nextjs/server";
+import { getCartItems, getCartTotal } from "@/actions/cart";
 import { CartSummary } from "@/components/cart-summary";
 import { CartItemCard } from "@/components/cart-item-card";
 import { CheckoutForm } from "@/components/checkout-form";
@@ -56,6 +56,26 @@ export default async function CheckoutPage() {
       redirect("/cart");
     }
 
+    // 총액 계산
+    const cartTotal = await getCartTotal();
+    const totalAmount = cartTotal.subtotal;
+
+    // Clerk 사용자 정보 조회 (이메일, 이름)
+    const client = await clerkClient();
+    const clerkUser = await client.users.getUser(userId);
+    const customerEmail =
+      clerkUser.emailAddresses[0]?.emailAddress || "customer@example.com";
+    const customerName =
+      clerkUser.fullName ||
+      clerkUser.username ||
+      clerkUser.emailAddresses[0]?.emailAddress ||
+      "고객";
+
+    console.log("[CheckoutPage] 고객 정보:", {
+      이메일: customerEmail,
+      이름: customerName,
+      총액: totalAmount,
+    });
     console.groupEnd();
 
     return (
@@ -76,7 +96,11 @@ export default async function CheckoutPage() {
             {/* 주문 정보 입력 폼 (왼쪽) */}
             <div className="lg:col-span-2">
               <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
-                <CheckoutForm />
+                <CheckoutForm
+                  totalAmount={totalAmount}
+                  customerName={customerName}
+                  customerEmail={customerEmail}
+                />
               </div>
 
               {/* 주문 상품 목록 */}

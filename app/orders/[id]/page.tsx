@@ -294,6 +294,77 @@ export default async function OrderDetailPage({
               </div>
             </div>
 
+            {/* 결제 정보 */}
+            {order.payment_status && (
+              <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+                <h2 className="mb-4 text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  결제 정보
+                </h2>
+                <div className="space-y-3">
+                  {order.payment_method && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        결제 수단
+                      </span>
+                      <span className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                        {order.payment_method}
+                      </span>
+                    </div>
+                  )}
+                  {order.payment_status === "success" && order.paid_at && (
+                    <>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          결제 상태
+                        </span>
+                        <span className="inline-flex items-center rounded-full bg-green-100 px-3 py-1 text-xs font-semibold text-green-800 dark:bg-green-900/30 dark:text-green-400">
+                          결제 완료
+                        </span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm text-gray-600 dark:text-gray-400">
+                          결제 일시
+                        </span>
+                        <span className="text-sm text-gray-900 dark:text-gray-100">
+                          {formatDate(order.paid_at)}
+                        </span>
+                      </div>
+                    </>
+                  )}
+                  {order.payment_status === "pending" && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        결제 상태
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-yellow-100 px-3 py-1 text-xs font-semibold text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400">
+                        결제 대기중
+                      </span>
+                    </div>
+                  )}
+                  {order.payment_status === "failed" && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        결제 상태
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-red-100 px-3 py-1 text-xs font-semibold text-red-800 dark:bg-red-900/30 dark:text-red-400">
+                        결제 실패
+                      </span>
+                    </div>
+                  )}
+                  {order.payment_status === "cancelled" && (
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
+                        결제 상태
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-3 py-1 text-xs font-semibold text-gray-800 dark:bg-gray-900/30 dark:text-gray-400">
+                        결제 취소됨
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {/* 총액 */}
             <div className="rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
               <div className="flex items-center justify-between">

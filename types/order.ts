@@ -5,6 +5,8 @@
  * Supabase orders 및 order_items 테이블 스키마에 맞춘 TypeScript 타입 정의
  */
 
+import type { PaymentMethod, PaymentStatus, PaymentInfo } from "./payment";
+
 /**
  * 배송지 정보
  */
@@ -36,6 +38,12 @@ export interface Order {
   status: OrderStatus;
   shipping_address: ShippingAddress | null;
   order_note: string | null;
+  // 결제 관련 필드
+  payment_id: string | null;
+  payment_method: PaymentMethod | null;
+  payment_status: PaymentStatus | null;
+  paid_at: string | null;
+  payment_info: PaymentInfo | null;
   created_at: string;
   updated_at: string;
 }

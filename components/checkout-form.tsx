@@ -53,15 +53,31 @@ import {
 } from "@/lib/schemas/checkout";
 import { createOrder } from "@/actions/orders";
 import { ShippingAddress } from "@/types/order";
+import { PaymentWidgetComponent } from "@/components/payment-widget";
 
 interface CheckoutFormProps {
   onSubmit?: (data: CheckoutFormData) => void | Promise<void>;
+  /** 주문 생성 후 호출되는 콜백 (주문 ID 전달) */
+  onOrderCreated?: (orderId: string) => void | Promise<void>;
+  /** 총 주문 금액 */
+  totalAmount: number;
+  /** 고객 이름 */
+  customerName: string;
+  /** 고객 이메일 */
+  customerEmail: string;
 }
 
-export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
+export function CheckoutForm({
+  onSubmit,
+  onOrderCreated,
+  totalAmount,
+  customerName,
+  customerEmail,
+}: CheckoutFormProps) {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [createdOrderId, setCreatedOrderId] = useState<string | null>(null);
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutFormSchema),
@@ -101,8 +117,15 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
         console.log("[CheckoutForm] 주문 생성 성공, 주문 ID:", result.orderId);
         console.groupEnd();
 
-        // 주문 완료 페이지로 리다이렉트
-        router.push(`/orders/${result.orderId}`);
+        // 주문 ID 저장 (결제 위젯 표시용)
+        setCreatedOrderId(result.orderId);
+
+        // onOrderCreated 콜백 호출
+        if (onOrderCreated) {
+          await onOrderCreated(result.orderId);
+        }
+
+        setIsLoading(false);
       } else {
         console.warn("[CheckoutForm] 주문 생성 실패:", result.message);
         console.groupEnd();
@@ -265,17 +288,32 @@ export function CheckoutForm({ onSubmit }: CheckoutFormProps) {
         )}
 
         {/* 폼 제출 버튼 */}
-        <div className="pt-4">
-          <Button
-            type="submit"
-            size="lg"
-            className="w-full"
-            disabled={isLoading}
-          >
-            {isLoading ? "처리 중..." : "주문하기"}
-          </Button>
-        </div>
+        {!createdOrderId && (
+          <div className="pt-4">
+            <Button
+              type="submit"
+              size="lg"
+              className="w-full"
+              disabled={isLoading}
+            >
+              {isLoading ? "처리 중..." : "주문하기"}
+            </Button>
+          </div>
+        )}
       </form>
+
+      {/* 결제 위젯 (주문 생성 후 표시) */}
+      {createdOrderId && (
+        <div className="mt-6 rounded-lg border border-gray-200 bg-white p-6 dark:border-gray-800 dark:bg-gray-900">
+          <PaymentWidgetComponent
+            orderId={createdOrderId}
+            amount={totalAmount}
+            orderName={`주문 #${createdOrderId.substring(0, 8)}`}
+            customerName={customerName}
+            customerEmail={customerEmail}
+          />
+        </div>
+      )}
     </Form>
   );
 }

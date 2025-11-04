@@ -377,23 +377,51 @@
       - [x] 주문 상태별 필터링 (선택사항)
       - [x] 에러 처리 및 로깅
 
-## Phase 4: 결제 통합 (1주)
+## Phase 4: 결제 통합 (1주) - ✅ 완료
 
-- [ ] Toss Payments MCP 연동
-  - [ ] Toss Payments MCP 서버 설정 확인
-  - [ ] 결제 API 키 설정 (환경 변수)
-  - [ ] 결제 위젯 라이브러리 설치 및 설정
-- [ ] 테스트 결제 구현
-  - [ ] 결제 버튼 컴포넌트
-  - [ ] 결제 요청 API/Server Action
-  - [ ] 결제 승인 처리
-  - [ ] 결제 실패 처리
-  - [ ] 결제 취소 처리
-- [ ] 결제 완료 후 주문 저장
-  - [ ] 결제 성공 웹훅 처리
-  - [ ] 결제 정보를 주문 테이블에 업데이트
-  - [ ] 주문 상태를 'confirmed'로 변경
-  - [ ] 결제 완료 후 리다이렉트
+- [x] Toss Payments SDK 연동
+  - [x] 결제 API 키 설정 (환경 변수)
+  - [x] 결제 위젯 라이브러리 설치 및 설정 (`@tosspayments/payment-widget-sdk`)
+- [x] 데이터베이스 스키마 확장
+  - [x] `orders` 테이블에 결제 관련 필드 추가 마이그레이션 작성
+    - [x] `payment_id` (TEXT): Toss Payments 결제 키
+    - [x] `payment_method` (TEXT): 결제 수단
+    - [x] `payment_status` (TEXT): 결제 상태 (pending, success, failed, cancelled)
+    - [x] `paid_at` (TIMESTAMP): 결제 완료 일시
+    - [x] `payment_info` (JSONB): 결제 상세 정보
+- [x] 결제 관련 타입 정의
+  - [x] `types/payment.ts` 생성 (PaymentMethod, PaymentStatus, PaymentInfo 등)
+  - [x] `types/order.ts` 업데이트 (결제 필드 추가)
+- [x] 결제 위젯 컴포넌트
+  - [x] `components/payment-widget.tsx` 생성
+  - [x] Toss Payments 위젯 초기화 및 렌더링
+  - [x] 결제 요청 처리
+  - [x] 에러 핸들링 및 로딩 상태 관리
+- [x] 결제 Server Actions
+  - [x] `actions/payments.ts` 생성
+  - [x] `requestPayment()`: 결제 요청 생성
+  - [x] `confirmPayment()`: 결제 승인 처리
+    - [x] Toss Payments API로 결제 승인 확인
+    - [x] 주문 상태를 'confirmed'로 업데이트
+    - [x] 결제 정보 저장
+  - [x] `cancelPayment()`: 결제 취소 처리
+- [x] 체크아웃 페이지 통합
+  - [x] `components/checkout-form.tsx` 수정
+    - [x] 주문 생성 후 결제 위젯 표시
+    - [x] 결제 완료 후 주문 완료 페이지로 리다이렉트
+  - [x] `app/checkout/page.tsx` 수정
+    - [x] 총액 계산 및 고객 정보 조회
+    - [x] 결제 위젯에 필요한 정보 전달
+- [x] 주문 완료 페이지 개선
+  - [x] `app/orders/[id]/page.tsx` 수정
+    - [x] 결제 정보 표시 (결제 수단, 결제 상태, 결제 일시)
+    - [x] 결제 상태별 뱃지 표시
+- [ ] 테스트 및 검증
+  - [ ] 결제 성공 플로우 테스트
+  - [ ] 결제 실패 플로우 테스트
+  - [ ] 결제 취소 플로우 테스트
+  - [ ] 환경 변수 설정 확인 (Toss Payments 테스트 키)
+  - [ ] 데이터베이스 마이그레이션 실행 확인
 
 ## Phase 5: 마이페이지 (0.5주)
 
